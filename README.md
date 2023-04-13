@@ -32,9 +32,11 @@ With the setting of time-based snapshots to 60 days after the R version was offi
 RSTUDIO_DISABLE_PACKAGE_INSTALL_PROMPT=yes
 ```
 
-This setting can be defined in `launcher-env` or similar files. It will disable the check if package is installed and also disable the attempt to update the packages if the IDE demands it. 
+This setting can be defined in `rsession-profile` or similar files. It will disable the check if package is installed and also disable the attempt to update the packages if the IDE demands it. 
 
 For all tests done so far with extremely old R versions and packages older than the IDE would want update to, no issue/problem with this approach could be found. 
+
+More details in the [Workbench Admin guide](https://docs.posit.co/ide/server-pro/rstudio_pro_sessions/package_installation.html#installations-and-upgrades-automated-by-rstudio-pro-ide).
 
 
 
