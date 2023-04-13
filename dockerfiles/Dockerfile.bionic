@@ -1,0 +1,38 @@
+FROM rstudio/r-session-complete:bionic-2022.12.0  
+
+ARG R_VERSIONS="4.2.3"
+
+# Install JDK for rJava support 
+RUN apt-get update -y && apt-get install -y default-jdk 
+
+# gdebi-core is needed for additional R versions
+RUN apt-get install -y gdebi-core 
+
+# remove any pre-existing R installation
+RUN dpkg -l | grep "  r-" | awk '{print $2}' | xargs apt remove  -y
+RUN rm -rf /opt/R /usr/local/bin/R /usr/local/bin/Rscript
+
+
+# Install and configure new set of defined R versions
+# Install of R version and make it default
+
+RUN for R_VERSION in ${R_VERSIONS}; do \
+	curl -O https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-${R_VERSION}_1_amd64.deb && \
+	gdebi -n r-${R_VERSION}_1_amd64.deb && \
+	rm -f r-${R_VERSION}_1_amd64.deb && \
+        rm -f /usr/local/bin/R /usr/local/bin/Rscript && \ 
+     	ln -s /opt/R/${R_VERSION}/bin/R /usr/local/bin/R && \
+	ln -s /opt/R/${R_VERSION}/bin/Rscript /usr/local/bin/Rscript ; \
+	done
+
+# Configure Java
+RUN for R_VERSION in ${R_VERSIONS}; do \
+	/opt/R/${R_VERSION}/bin/R CMD javareconf ; \
+	done
+
+# Pre-install R packages needed for IDE integration
+COPY run.R /
+RUN for R_VERSION in ${R_VERSIONS}; do \
+        /opt/R/${R_VERSION}/bin/Rscript /run.R ; \
+        done
+

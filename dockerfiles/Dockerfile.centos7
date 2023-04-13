@@ -1,0 +1,43 @@
+FROM rstudio/r-session-complete:centos7-2022.12.0  
+
+ARG R_VERSIONS="4.2.3"
+
+# Install JDK for rJava support 
+RUN yum install -y java-11-openjdk-devel 
+
+# Set up developer toolset 11 for R only (optional)
+RUN yum -y install centos-release-scl && yum -y install devtoolset-11
+COPY devtoolset.script /tmp
+
+# remove any pre-existing R installation
+RUN rpm -qa | grep ^R- | xargs rpm -e  
+RUN rm -rf /opt/R /usr/local/bin/R /usr/local/bin/Rscript
+
+
+# Install and configure new set of defined R versions
+# Install of R version and make it default
+
+RUN for R_VERSION in ${R_VERSIONS}; do \
+	curl -O https://cdn.rstudio.com/r/centos-7/pkgs/R-${R_VERSION}-1-1.x86_64.rpm && \
+	yum install -y R-${R_VERSION}-1-1.x86_64.rpm && \
+	rm -f R-${R_VERSION}-1-1.x86_64.rpm && \
+        rm -f /usr/local/bin/R /usr/local/bin/Rscript && \ 
+     	ln -s /opt/R/${R_VERSION}/bin/R /usr/local/bin/R && \
+	ln -s /opt/R/${R_VERSION}/bin/Rscript /usr/local/bin/Rscript ; \
+	done
+
+# Activate Developer Toolset 11 in the respective R Version
+RUN for R_VERSION in ${R_VERSIONS}; do cp /tmp/devtoolset.script /opt/R/${R_VERSION}/lib/R/etc/Renviron.site; done
+
+# Configure Java
+RUN for R_VERSION in ${R_VERSIONS}; do \
+	export JAVA_HOME=/usr/lib/jvm/jre-11-openjdk && \
+	/opt/R/${R_VERSION}/bin/R CMD javareconf ; \
+	done
+
+# Pre-install R packages needed for IDE integration
+COPY run.R /
+RUN for R_VERSION in ${R_VERSIONS}; do \
+        /opt/R/${R_VERSION}/bin/Rscript /run.R ; \
+        done
+
