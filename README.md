@@ -9,7 +9,7 @@ This repo would like to help with the integration of R with the RStudio IDE and 
 * Since `rJava` typically can be challenging to install, in this repo we also provide a consistent way of configuring `rJava` to work with the system provided `JAVA` installation (cf. [solutions.posit.co](https://solutions.posit.co/envs-pkgs/using-rjava/index.html#setup-java-support-in-r))
 * The posit provided docker images for `workbench` and `r-session-complete` are typically way behind in terms of the latest available R version. Furthermore it is not always the latest version that is made the default version. In this repo we also show a way on how users can easily add their own desired R versions. This is achieved by programmatically removing any existing R versions and only installing the ones provided by the user
 * Every R version will also be configured to directly use the appropriate R binaries suited for the Linux distribution chosen. By default Public Posit Package Manager is used, but users with local Package Managers can change the URL in line 30 of `run.R`.
-* Lastly, for users that are still on CentOS/RHEL 7, we also provide a way to make use of the later compiler versions provided by the Red Hat Developer Toolset.
+* Lastly, for users that are still on CentOS/RHEL 7, we also provide a way to make use of the later compiler versions provided by [Red Hat Developer Toolset 11](https://access.redhat.com/documentation/en-us/red_hat_developer_toolset/11/html/11.0_release_notes/index).
 
 ## How to use this repo
 
