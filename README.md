@@ -24,5 +24,17 @@ docker build --build-arg R_VERSIONS="4.0.5 4.1.3 4.2.3" . -f Dockerfile.bionic
 
 The last mentioned R version (4.2.3 in this case) will be the default version. 
 
+## A separate note on the preinstallation R packages needed for the RStudio IDE integration
+
+With the setting of time-based snapshots to 60 days after the R version was officially released, for some older versions the IDE may still try to force updates of some packages. This can be avoided by setting
+
+```
+RSTUDIO_DISABLE_PACKAGE_INSTALL_PROMPT=yes
+```
+
+This setting can be defined in `launcher-env` or similar files. It will disable the check if package is installed and also disable the attempt to update the packages if the IDE demands it. 
+
+For all tests done so far with extremely old R versions and packages older than the IDE would want update to, no issue/problem with this approach could be found. 
+
 
 
